@@ -1,0 +1,23 @@
+{
+  "name": "hostinger-npm",
+  "version": "1.0.0",
+  "description": "npm guide for beginner",
+  "main": "beginner-npm.js",
+  "scripts": {
+    "server-dev": "npx nodemon --watch server server/index.js",
+    "test-reviews": "jest ./testsuites/reviews.spec.js"
+  },
+  "dependencies": {
+    "git": "^0.1.5",
+    "jest": "^29.0.3",
+    "jest-environment-jsdom": "^29.0.3",
+    "node": "^18.9.0",
+    "package": "^1.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpp2204-fec-cheesefoam/chinese_forum.git"
+  },
+  "author": "Hostinger International",
+  "license": "HR-rpp2204"
+}
