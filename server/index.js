@@ -14,13 +14,12 @@ app.get('/test', (req, res) => {
   res.send(200);
 })
 
-
 app.get('/reviews/meta*', (req, res) => {
+
   let product_id = req.query.product_id;
 
   let response = {};
   response.product = product_id;
-
 
   Promise.all([
     db.getRatingsDistr(product_id),
@@ -42,7 +41,6 @@ app.get('/reviews/meta*', (req, res) => {
 
       response['recommended'] = { '0': results[1][0]['recommend_count'] };
 
-
       let characteristics = {};
       results[2].map((result) => {
         // console.log(result['avg']);
@@ -51,10 +49,6 @@ app.get('/reviews/meta*', (req, res) => {
       response['characteristics'] = characteristics;
       res.send(response);
     })
-
-
-
-
 })
 
 app.get('/reviews*', (req, res) => {
@@ -105,30 +99,24 @@ app.get('/reviews*', (req, res) => {
     });
 })
 
-
 app.post('/reviews', (req, res) => {
   let review = req.body;
-  console.log('insert into review: ',review);
+  console.log('insert into review: ', review);
   Promise.resolve(db.insertReview(review.product_id, review.rating, review.summary, review.body, review.recommend, review.name, review.email, review.photos, review.characteristics))
     .then((response) => {
       res.send(response);
     });
-
 })
-
 
 app.put('/reviews/:review_id/helpful', (req, res) => {
   db.incrementHelpful(req.params.review_id)
-  .then(results => {
-    res.send(results);
-  })
-  .catch(err => {
-    res.send(err);
-  });
-
-
+    .then(results => {
+      res.send(results);
+    })
+    .catch(err => {
+      res.send(err);
+    });
 })
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

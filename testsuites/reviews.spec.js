@@ -2,8 +2,7 @@ const request = require("supertest")
 const app = require('../server/index.js');
 
 // describe("Example tests", function () {
-//     jest.setTimeout(10000);
-
+//
 //     // Individual tests can be run using the "it" or "test" methods, they are aliased and are equivalent
 //     it("1 should be 1", function () {
 //         /* This test suite is written in Jest. There are many more methods other than "toBe"
