@@ -1,7 +1,8 @@
 const db = require('../db/index');
 const express = require('express')
 const app = express()
-const port = 4000
+const port = 4000;
+require("dotenv").config({ path: '../.env' });
 
 // For parsing application/json
 app.use(express.json());
@@ -9,8 +10,12 @@ app.use(express.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/test', (req, res) => {
+  res.send(200);
+})
+
+
 app.get('/reviews/meta*', (req, res) => {
-  console.log('meta');
   let product_id = req.query.product_id;
 
   let response = {};
@@ -37,7 +42,6 @@ app.get('/reviews/meta*', (req, res) => {
 
       response['recommended'] = { '0': results[1][0]['recommend_count'] };
 
-      // console.log(results[2]);
 
       let characteristics = {};
       results[2].map((result) => {
@@ -45,7 +49,6 @@ app.get('/reviews/meta*', (req, res) => {
         characteristics[result['name']] = { 'id': result['id'], 'value': result['avg'] };
       })
       response['characteristics'] = characteristics;
-      console.log(response);
       res.send(response);
     })
 
@@ -55,7 +58,6 @@ app.get('/reviews/meta*', (req, res) => {
 })
 
 app.get('/reviews*', (req, res) => {
-  console.log('id', req.params.id);
   // console.log("All query strings: " + JSON.stringify(req.query));
   let product_id = req.query.product_id;
   let page = req.query.page || 0;
@@ -75,8 +77,6 @@ app.get('/reviews*', (req, res) => {
     default:
       sort = ''
   }
-
-  console.log('page, count, sort, id', page, count, sort, product_id);
 
   Promise.resolve(db.getReviews(page, count, sort, product_id))
     .then((data) => {
@@ -134,48 +134,5 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-/*
-[
-  { rating: 2, ratings_count: '1' },
-  { rating: 3, ratings_count: '1' },
-  { rating: 4, ratings_count: '2' },
-  { rating: 5, ratings_count: '1' }
-]
 
-[ { recommend_count: '3' } ]
-
-[ { name: 'Quality', avg: '4.2000000000000000' } ]
-
-
-
-
-
-{
-  "product_id": "2",
-  "ratings": {
-    2: 1,
-    3: 1,
-    4: 2,
-    // ...
-  },
-  "recommended": {
-    0: 5
-    // ...
-  },
-  "characteristics": {
-    "Size": {
-      "id": 14,
-      "value": "4.0000"
-    },
-    "Width": {
-      "id": 15,
-      "value": "3.5000"
-    },
-    "Comfort": {
-      "id": 16,
-      "value": "4.0000"
-    },
-    // ...
-}
-
-*/
+module.exports = app;

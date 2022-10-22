@@ -193,3 +193,9 @@ module.exports = {
   // Whether to use watchman for file crawling
   // watchman: true,
 };
+
+process.env = Object.assign(process.env, {
+  DB_USER:'david',
+  DB_NAME:'sdc',
+  DB_PASSWORD:'config123'
+});
