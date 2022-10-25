@@ -1,14 +1,15 @@
 require("dotenv").config({ path: '../.env' });
-const { Pool, Client } = require('pg')
+const { Pool } = require('pg')
 
 const pool = new Pool({
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  "max": 20,
+  "max": 200,
   "connectionTimeoutMillis": 100,
   "idleTimeoutMillis": 100
 });
+// pool.connect();
 
 const getReviews = (page, count, sort, product_id) => {
   let getReviewsQuery =
@@ -42,11 +43,10 @@ const getReviews = (page, count, sort, product_id) => {
     LIMIT ${count} OFFSET ${count * page};
     `;
 
-  pool.connect();
 
   return pool.query(getReviewsQuery)
     .then((data) => {
-      console.log(data.rows);
+      // console.log(data.rows);
       return data.rows;
     })
     .catch((error) => {

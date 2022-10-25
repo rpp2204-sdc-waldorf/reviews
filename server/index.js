@@ -10,9 +10,6 @@ app.use(express.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/test', (req, res) => {
-  res.send(200);
-})
 
 app.get('/reviews/meta*', (req, res) => {
 
@@ -26,6 +23,9 @@ app.get('/reviews/meta*', (req, res) => {
     db.getRecommendedCount(product_id),
     db.getCharacteristics(product_id)
   ])
+    .catch(err => {
+      res.send(err);
+    })
     .then((results) => {
       let ratings = {
         1: 0,
@@ -48,7 +48,7 @@ app.get('/reviews/meta*', (req, res) => {
       })
       response['characteristics'] = characteristics;
       res.send(response);
-    })
+    });
 })
 
 app.get('/reviews*', (req, res) => {
@@ -101,7 +101,7 @@ app.get('/reviews*', (req, res) => {
 
 app.post('/reviews', (req, res) => {
   let review = req.body;
-  console.log('insert into review: ', review);
+  // console.log('insert into review: ', review);
   Promise.resolve(db.insertReview(review.product_id, review.rating, review.summary, review.body, review.recommend, review.name, review.email, review.photos, review.characteristics))
     .then((response) => {
       res.send(response);
