@@ -109,6 +109,7 @@ app.post('/reviews', (req, res) => {
 })
 
 app.put('/reviews/:review_id/helpful', (req, res) => {
+  console.log('req.params.review_id', req.params.review_id)
   db.incrementHelpful(req.params.review_id)
     .then(results => {
       res.send(results);

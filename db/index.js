@@ -15,7 +15,7 @@ const getReviews = (page, count, sort, product_id) => {
   let getReviewsQuery =
     `
     SELECT
-      id,
+      id as review_id,
       product_id,
       rating,
       summary,
