@@ -47,7 +47,7 @@ app.get('/reviews/meta*', (req, res) => {
         })
       }
       response.ratings = ratings;
-      let recommendedCount =results[1][0]['recommend_count'] || 0;
+      let recommendedCount = results[1][0]['recommend_count'] || 0;
       response['recommended'] = { '0': recommendedCount };
 
       let characteristics = {};
