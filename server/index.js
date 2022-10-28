@@ -32,7 +32,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.send(err);
     })
     .then((results) => {
-      console.log('results', results[0]);
+      // console.log('results', results[0]);
       let ratings = {
         1: 0,
         2: 0,
