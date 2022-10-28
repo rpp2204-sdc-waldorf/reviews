@@ -5,9 +5,9 @@ const pool = new Pool({
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  "max": 200,
+  "max": 500,
   "connectionTimeoutMillis": 100,
-  "idleTimeoutMillis": 100
+  "idleTimeoutMillis": 0
 });
 // pool.connect();
 
@@ -42,8 +42,6 @@ const getReviews = (page, count, sort, product_id) => {
     ${sort}
     LIMIT ${count} OFFSET ${count * page};
     `;
-
-
   return pool.query(getReviewsQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -51,11 +49,11 @@ const getReviews = (page, count, sort, product_id) => {
     })
     .catch((error) => {
       console.log('error with query', error);
+      return error;
     })
 }
 
 const getRatingsDistr = product_id => {
-
   let getRatingsDistrQuery =
     `
   SELECT rating,count(*) as ratings_Count
@@ -63,7 +61,6 @@ const getRatingsDistr = product_id => {
   WHERE product_id = ${product_id}
   GROUP BY rating;
   `;
-
   return pool.query(getRatingsDistrQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -71,19 +68,18 @@ const getRatingsDistr = product_id => {
     })
     .catch((error) => {
       console.log('error with query', error);
+      return error;
     })
 
 }
 
 const getRecommendedCount = product_id => {
-
   let getRatingsDistrQuery =
     `
   SELECT count(id) as recommend_Count
   FROM reviews
   WHERE product_id = ${product_id} AND recommend = 'true'
   `;
-
   return pool.query(getRatingsDistrQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -91,12 +87,11 @@ const getRecommendedCount = product_id => {
     })
     .catch((error) => {
       console.log('error with query', error);
+      return error;
     })
-
 }
 
 const getCharacteristics = product_id => {
-
   let getCharacteristicsQuery =
     `
     SELECT a.name, a.id, AVG(b.value)
@@ -106,9 +101,6 @@ const getCharacteristics = product_id => {
     WHERE product_id = ${product_id}
     GROUP BY name, a.id;
     `;
-
-
-
   return pool.query(getCharacteristicsQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -116,20 +108,18 @@ const getCharacteristics = product_id => {
     })
     .catch((error) => {
       console.log('error with query', error);
+      return error;
     })
 }
 
 const insertReview = (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email, photos, characteristics) => {
-
   let insertReviewQuery =
     `
   INSERT INTO reviews (id,product_id,rating,summary,body,recommend,reviewer_name,reviewer_email,helpfulness)
   VALUES (nextval('reviews_id_seq'), ${product_id}, ${rating}, '${summary}', '${body}', ${recommend}, '${reviewer_name}', '${reviewer_email}', 0)
   RETURNING id;
   `;
-
   return pool.query(insertReviewQuery)
-
     .then((res) => {
       let reviewId = res.rows[0].id;
 
@@ -144,13 +134,9 @@ const insertReview = (product_id, rating, summary, body, recommend, reviewer_nam
           .catch(err => {
             console.log(err);
           });
-
-
       }
-
       let keys = Object.keys(characteristics)
       for (var i = 0; i < keys.length; i++) {
-
         let insertCharacteristicQuery =
           `
           INSERT INTO characteristic_reviews (id, characteristic_id,review_id,value)
@@ -160,10 +146,7 @@ const insertReview = (product_id, rating, summary, body, recommend, reviewer_nam
           .catch(err => {
             console.log(err);
           });
-
-
       }
-
     })
     .catch(err => {
       console.log(err);
@@ -171,16 +154,12 @@ const insertReview = (product_id, rating, summary, body, recommend, reviewer_nam
 }
 
 const incrementHelpful = review_id => {
-
-
   let incrementHelpfulQuery =
     `
     UPDATE reviews
     SET helpfulness = helpfulness+1
     WHERE id=${review_id};
   `;
-
-
   return pool.query(incrementHelpfulQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -189,20 +168,15 @@ const incrementHelpful = review_id => {
     .catch((error) => {
       console.log('error with query', error);
     })
-
 }
 
 const reportReview = review_id => {
-
-
   let reportReviewQuery =
     `
     UPDATE reviews
     SET reported = true
     WHERE id=${review_id};
   `;
-
-
   return pool.query(reportReviewQuery)
     .then((data) => {
       // console.log(data.rows);
@@ -211,7 +185,6 @@ const reportReview = review_id => {
     .catch((error) => {
       console.log('error with query', error);
     })
-
 }
 
 module.exports.getReviews = getReviews;

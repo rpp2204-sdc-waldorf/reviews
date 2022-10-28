@@ -10,11 +10,17 @@ app.use(express.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/loaderio-*', (req, res) => {
+
+  console.log('verify target');
+  res.sendFile('./loaderio-3ba255ee13cc427a0d5c5bb9f13a4f98.txt');
+})
+
 
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
-
+  console.log(product_id);
   let response = {};
   response.product = product_id;
 
