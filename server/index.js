@@ -11,7 +11,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/loaderio-*', (req, res) => {
-
   console.log('verify target');
   res.sendFile('./loaderio-3ba255ee13cc427a0d5c5bb9f13a4f98.txt');
 })
@@ -20,7 +19,7 @@ app.get('/loaderio-*', (req, res) => {
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
-  console.log(product_id);
+  console.log('GET /reviews/meta ', product_id);
   let response = {};
   response.product = product_id;
 
@@ -33,6 +32,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.send(err);
     })
     .then((results) => {
+      console.log('results', results[0]);
       let ratings = {
         1: 0,
         2: 0,
@@ -40,18 +40,23 @@ app.get('/reviews/meta*', (req, res) => {
         4: 0,
         5: 0
       };
-      results[0].map((result) => {
-        ratings[result['rating']] = Number(result['ratings_count']);
-        response.ratings = ratings;
-      })
+
+      if (Object.keys(results[0]).length !== 0) {
+        results[0].map((result) => {
+          ratings[result['rating']] = Number(result['ratings_count']);
+        })
+      }
+      response.ratings = ratings;
 
       response['recommended'] = { '0': results[1][0]['recommend_count'] };
 
       let characteristics = {};
-      results[2].map((result) => {
-        // console.log(result['avg']);
-        characteristics[result['name']] = { 'id': result['id'], 'value': result['avg'] };
-      })
+      if (Object.keys(results[2]).length !== 0) {
+        results[2].map((result) => {
+          // console.log(result['avg']);
+          characteristics[result['name']] = { 'id': result['id'], 'value': result['avg'] };
+        })
+      }
       response['characteristics'] = characteristics;
       res.send(response);
     });
