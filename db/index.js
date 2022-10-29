@@ -2,6 +2,7 @@ require("dotenv").config({ path: '../.env' });
 const { Pool } = require('pg')
 
 const pool = new Pool({
+  host: 'ec2-52-8-104-138.us-west-1.compute.amazonaws.com',
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
