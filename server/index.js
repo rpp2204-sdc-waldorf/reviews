@@ -46,8 +46,12 @@ app.get('/reviews/meta*', (req, res) => {
         })
       }
       response.ratings = ratings;
-      let recommendedCount = results[1][0]['recommend_count'] || 0;
-      response['recommended'] = { '0': recommendedCount };
+      try {
+        response['recommended'] = { '0': results[1][0]['recommend_count'] };
+      } catch (error) {
+        console.log('results[1][0][recommend_count] undefined');
+        response['recommended'] = { '0': 0 };
+      }
 
       let characteristics = {};
       if (Object.keys(results[2]).length !== 0) {
