@@ -28,7 +28,7 @@ app.get('/reviews/meta*', (req, res) => {
     db.getCharacteristics(product_id)
   ])
     .catch(err => {
-      res.send(err);
+      res.send(err.mesage);
     })
     .then((results) => {
       // console.log('results', results[0]);
