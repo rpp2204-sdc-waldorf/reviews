@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/loaderio-*', (req, res) => {
   console.log('verify target');
-  res.sendFile('/home/ubuntu/reviews/server/loaderio-3ba255ee13cc427a0d5c5bb9f13a4f98.txt');
+  res.sendFile(process.env.loaderio);
 })
 
 app.get('/reviews/meta*', (req, res) => {
