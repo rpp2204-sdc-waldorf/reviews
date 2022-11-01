@@ -50,7 +50,7 @@ app.get('/reviews/meta*', (req, res) => {
       try {
         response['recommended'] = { '0': results[1][0]['recommend_count'] };
       } catch (error) {
-        console.log('results[1][0][recommend_count] undefined');
+        // console.log('results[1][0][recommend_count] undefined');
         response['recommended'] = { '0': 0 };
       }
 
