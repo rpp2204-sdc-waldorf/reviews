@@ -18,7 +18,7 @@ app.get('/loaderio-*', (req, res) => {
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
-  console.log('GET /reviews/meta ', product_id);
+  // console.log('GET /reviews/meta ', product_id);
   let response = {};
   response.product = product_id;
 

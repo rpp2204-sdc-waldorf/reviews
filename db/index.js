@@ -89,7 +89,7 @@ const getRecommendedCount = product_id => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
@@ -110,7 +110,7 @@ const getCharacteristics = product_id => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
@@ -150,8 +150,8 @@ const insertReview = (product_id, rating, summary, body, recommend, reviewer_nam
           });
       }
     })
-    .catch(err => {
-      console.log(err);
+    .catch( (error) => {
+      throw error;
     })
 }
 
