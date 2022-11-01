@@ -28,6 +28,7 @@ app.get('/reviews/meta*', (req, res) => {
     db.getCharacteristics(product_id)
   ])
     .catch(err => {
+      console.log('error with query, res 500')
       res.status(500).send('Something broke!');
     })
     .then((results) => {
@@ -109,6 +110,7 @@ app.get('/reviews*', (req, res) => {
 
     })
     .catch(err => {
+      console.log('error with query, res 500')
       res.status(500).send('Something broke!');
     });
 })

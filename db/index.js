@@ -50,7 +50,7 @@ const getReviews = (page, count, sort, product_id) => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 }
@@ -58,7 +58,7 @@ const getReviews = (page, count, sort, product_id) => {
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
     `
-  SELECT rating,count(*) as ratings_Count
+  SELECT rating,count(id) as ratings_Count
   FROM reviews
   WHERE product_id = ${product_id}
   GROUP BY rating;
@@ -69,7 +69,7 @@ const getRatingsDistr = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 
@@ -88,7 +88,7 @@ const getRecommendedCount = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 }
@@ -109,7 +109,7 @@ const getCharacteristics = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 }
