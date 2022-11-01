@@ -27,13 +27,9 @@ app.get('/reviews/meta*', (req, res) => {
     db.getRecommendedCount(product_id),
     db.getCharacteristics(product_id)
   ])
-    .catch(err => {
-      console.log('error with query, res 500')
-      res.status(500).send('Something broke!');
-    })
-    .then((results) => {
-      // console.log('results', results[0]);
-      let ratings = {
+  .then((results) => {
+    // console.log('results', results[0]);
+    let ratings = {
         1: 0,
         2: 0,
         3: 0,
@@ -63,11 +59,15 @@ app.get('/reviews/meta*', (req, res) => {
       }
       response['characteristics'] = characteristics;
       res.send(response);
+    })
+    .catch(err => {
+      console.log('error with query, res 500')
+      res.status(500).send('Something broke!');
     });
-})
+  })
 
-app.get('/reviews*', (req, res) => {
-  // console.log("All query strings: " + JSON.stringify(req.query));
+  app.get('/reviews*', (req, res) => {
+    // console.log("All query strings: " + JSON.stringify(req.query));
   let product_id = req.query.product_id;
   let page = req.query.page || 0;
   let count = req.query.count || 5;

@@ -51,7 +51,7 @@ const getReviews = (page, count, sort, product_id) => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
@@ -70,7 +70,7 @@ const getRatingsDistr = product_id => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 
 }
@@ -89,7 +89,7 @@ const getRecommendedCount = product_id => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
@@ -110,7 +110,7 @@ const getCharacteristics = product_id => {
     })
     .catch((error) => {
       // console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
