@@ -69,7 +69,7 @@ const getRatingsDistr = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 
@@ -88,7 +88,7 @@ const getRecommendedCount = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 }
@@ -109,7 +109,7 @@ const getCharacteristics = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      console.log('error with query', error);
+      // console.log('error with query', error);
       return error;
     })
 }
