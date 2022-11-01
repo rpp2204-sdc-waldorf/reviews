@@ -62,7 +62,7 @@ app.get('/reviews/meta*', (req, res) => {
     })
     .catch(err => {
       // console.log('error with query, res 500')
-      res.status(500).send('Something broke!');
+      res.status(500).send('GET reviews/meta broke!');
     });
   })
 
@@ -110,8 +110,7 @@ app.get('/reviews/meta*', (req, res) => {
 
     })
     .catch(err => {
-      console.log('error with query, res 500')
-      res.status(500).send('Something broke!');
+      res.status(500).send('GET reviews broke!');
     });
 })
 
