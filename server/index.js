@@ -28,7 +28,7 @@ app.get('/reviews/meta*', (req, res) => {
     db.getCharacteristics(product_id)
   ])
     .catch(err => {
-      res.send(err.mesage);
+      res.status(500).send('Something broke!');
     })
     .then((results) => {
       // console.log('results', results[0]);
@@ -109,7 +109,7 @@ app.get('/reviews*', (req, res) => {
 
     })
     .catch(err => {
-      res.send(err);
+      res.status(500).send('Something broke!');
     });
 })
 
@@ -119,6 +119,9 @@ app.post('/reviews', (req, res) => {
   Promise.resolve(db.insertReview(review.product_id, review.rating, review.summary, review.body, review.recommend, review.name, review.email, review.photos, review.characteristics))
     .then((response) => {
       res.send(response);
+    })
+    .catch((err) => {
+      res.status(500).send('POST reviews broke!');
     });
 })
 
@@ -129,7 +132,7 @@ app.put('/reviews/:review_id/helpful', (req, res) => {
       res.send(results);
     })
     .catch(err => {
-      res.send(err);
+      res.status(500).send('PUT helpful broke!')
     });
 })
 
@@ -140,7 +143,7 @@ app.put('/reviews/:review_id/report', (req, res) => {
       res.send(results);
     })
     .catch(err => {
-      res.send(err);
+      res.status(500).send('PUT report broke!')
     });
 })
 
