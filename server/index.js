@@ -61,7 +61,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.send(response);
     })
     .catch(err => {
-      console.log('error with query, res 500')
+      // console.log('error with query, res 500')
       res.status(500).send('Something broke!');
     });
   })
