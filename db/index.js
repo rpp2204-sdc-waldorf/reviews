@@ -38,7 +38,7 @@ const getReviews = (page, count, sort, product_id) => {
       FROM reviews as a
       LEFT JOIN reviews_photos as b
       ON a.id = b.review_id
-      WHERE product_id = 71701
+      WHERE product_id = ${product_id}
       ) rjp
 
       GROUP BY rjp.id, rjp.product_id, rjp.rating, rjp.date, rjp.summary, rjp.body, rjp.recommend,
