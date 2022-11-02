@@ -55,7 +55,6 @@ const getReviews = (page, count, sort, product_id) => {
     })
 }
 
-getReviews(0,10,'',4)
 
 // const getReviews = (page, count, sort, product_id) => {
 //   let getReviewsQuery =
