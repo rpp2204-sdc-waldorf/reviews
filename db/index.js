@@ -15,7 +15,7 @@ const pool = new Pool({
 const getReviews = (page, count, sort, product_id) => {
   let getReviewsQuery =
     `
-    select
+    SELECT
       rjp.id as review_id,
       rating,
       summary,
@@ -32,7 +32,7 @@ const getReviews = (page, count, sort, product_id) => {
         ),'{}') as photos
 
 
-    from
+    FROM
     (
       SELECT a.*, b.id as photo_id, b.url
       FROM reviews as a
