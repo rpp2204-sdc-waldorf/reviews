@@ -1,21 +1,22 @@
 require("dotenv").config({ path: '../.env' });
-const { Pool } = require('pg')
+const { Pool, Client } = require('pg')
 
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  "max": 500,
-  "connectionTimeoutMillis": 300,
-  "idleTimeoutMillis": 0
+  "max": 100,
+  "connectionTimeoutMillis": 100,
+  "idleTimeoutMillis": 10
 });
 // pool.connect();
 
 const getReviews = (page, count, sort, product_id) => {
+
   let getReviewsQuery =
-    `
-    SELECT
+  `
+  SELECT
       rjp.id as review_id,
       rating,
       summary,
@@ -28,13 +29,13 @@ const getReviews = (page, count, sort, product_id) => {
       array_agg(
         json_strip_nulls(
           json_build_object('id', rjp.photo_id, 'url', rjp.url)
-        )
-      ) as photos
+          )
+          ) as photos
 
 
-    FROM
-    (
-      SELECT a.*, b.id as photo_id, b.url
+          FROM
+          (
+            SELECT a.*, b.id as photo_id, b.url
       FROM reviews as a
       LEFT JOIN reviews_photos as b
       ON a.id = b.review_id
@@ -47,15 +48,35 @@ const getReviews = (page, count, sort, product_id) => {
     ${sort}
     LIMIT ${count} OFFSET ${count * page};
     `;
-  return pool.query(getReviewsQuery)
-    .then((data) => {
-      // console.log(data.rows);
-      return data.rows;
-    })
-    .catch((error) => {
-      console.log('error with query', error);
-      return error;
-    })
+
+  // return pool.query(getReviewsQuery)
+  //   .then((data) => {
+    //     // console.log(data.rows);
+    //     return data.rows;
+    //   })
+    //   .catch((error) => {
+      //     console.log('error with query', error);
+      //     return error;
+      //   })
+      console.log('hello');
+      const client = new Client({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+      })
+      client.connect();
+      return client.query(getReviewsQuery)
+      .then(data => {
+        console.log(data.rows);
+        return data.rows;
+      })
+      .catch(e => {
+        console.error(e.stack)
+      })
+      .finally( () => {
+        client.end()
+      });
 }
 
 
