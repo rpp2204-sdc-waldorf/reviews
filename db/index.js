@@ -58,7 +58,7 @@ const getReviews = (page, count, sort, product_id) => {
       //     console.log('error with query', error);
       //     return error;
       //   })
-      console.log('hello');
+      // console.log('hello');
       const client = new Client({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -68,7 +68,7 @@ const getReviews = (page, count, sort, product_id) => {
       client.connect();
       return client.query(getReviewsQuery)
       .then(data => {
-        console.log(data.rows);
+        // console.log(data.rows);
         return data.rows;
       })
       .catch(e => {
