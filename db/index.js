@@ -3,7 +3,6 @@ const { Pool } = require('pg')
 
 const pool = new Pool({
   // host: 'ec2-52-8-104-138.us-west-1.compute.amazonaws.com',
-  host: process.env.DB_HOST,
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
@@ -16,9 +15,8 @@ const pool = new Pool({
 const getReviews = (page, count, sort, product_id) => {
   let getReviewsQuery =
     `
-    SELECT
-      id as review_id,
-      product_id,
+    select
+      rjp.id as review_id,
       rating,
       summary,
       recommend,
@@ -27,22 +25,24 @@ const getReviews = (page, count, sort, product_id) => {
       date,
       reviewer_name,
       helpfulness,
-      array_remove(array_agg(rjp.url),NULL) as photos
+        NULLIF(array_agg(
+          json_strip_nulls(
+            json_build_object('id', rjp.photo_id, 'url', rjp.url)
+          )
+        ),'{}') as photos
 
-    FROM
-      (
-      SELECT a.*, b.url
+
+    from
+    (
+      SELECT a.*, b.id as photo_id, b.url
       FROM reviews as a
       LEFT JOIN reviews_photos as b
       ON a.id = b.review_id
       WHERE product_id = ${product_id}
-      ) as rjp
+      ) rjp
 
       GROUP BY rjp.id, rjp.product_id, rjp.rating, rjp.date, rjp.summary, rjp.body, rjp.recommend,
       rjp.reported, rjp.reviewer_name, rjp.reviewer_email, rjp.response, rjp.helpfulness
-
-    ${sort}
-    LIMIT ${count} OFFSET ${count * page};
     `;
   return pool.query(getReviewsQuery)
     .then((data) => {
@@ -50,15 +50,59 @@ const getReviews = (page, count, sort, product_id) => {
       return data.rows;
     })
     .catch((error) => {
-      // console.log('error with query', error);
-      throw error;
+      console.log('error with query', error);
+      return error;
     })
 }
+
+getReviews(0,10,'',4)
+
+// const getReviews = (page, count, sort, product_id) => {
+//   let getReviewsQuery =
+//     `
+//     SELECT
+//       id as review_id,
+//       product_id,
+//       rating,
+//       summary,
+//       recommend,
+//       response,
+//       body,
+//       date,
+//       reviewer_name,
+//       helpfulness,
+//       array_remove(array_agg(rjp.url),NULL) as photos
+
+//     FROM
+//       (
+//       SELECT a.*, b.url
+//       FROM reviews as a
+//       LEFT JOIN reviews_photos as b
+//       ON a.id = b.review_id
+//       WHERE product_id = ${product_id}
+//       ) as rjp
+
+//       GROUP BY rjp.id, rjp.product_id, rjp.rating, rjp.date, rjp.summary, rjp.body, rjp.recommend,
+//       rjp.reported, rjp.reviewer_name, rjp.reviewer_email, rjp.response, rjp.helpfulness
+
+//     ${sort}
+//     LIMIT ${count} OFFSET ${count * page};
+//     `;
+//   return pool.query(getReviewsQuery)
+//     .then((data) => {
+//       // console.log(data.rows);
+//       return data.rows;
+//     })
+//     .catch((error) => {
+//       console.log('error with query', error);
+//       return error;
+//     })
+// }
 
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
     `
-  SELECT rating,count(id) as ratings_Count
+  SELECT rating,count(*) as ratings_Count
   FROM reviews
   WHERE product_id = ${product_id}
   GROUP BY rating;
@@ -69,8 +113,8 @@ const getRatingsDistr = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      // console.log('error with query', error);
-      throw error;
+      console.log('error with query', error);
+      return error;
     })
 
 }
@@ -88,8 +132,8 @@ const getRecommendedCount = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      // console.log('error with query', error);
-      throw error;
+      console.log('error with query', error);
+      return error;
     })
 }
 
@@ -109,8 +153,8 @@ const getCharacteristics = product_id => {
       return data.rows;
     })
     .catch((error) => {
-      // console.log('error with query', error);
-      throw error;
+      console.log('error with query', error);
+      return error;
     })
 }
 

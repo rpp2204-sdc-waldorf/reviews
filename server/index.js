@@ -91,15 +91,10 @@ app.get('/reviews/meta*', (req, res) => {
     .then((data) => {
       for (var i = 0; i < data.length; ++i) {
         data[i].date = new Date(Number(data[i].date));
-
-        let photosJSONArray = [];
-        if (data[i].photos.length > 0) {
-          for (var j = 0; j < data[i].photos.length; j++) {
-            let photoJSON = { 'id': j + 1, 'url': data[i].photos[j] };
-            photosJSONArray.push(photoJSON);
-          }
-          data[i].photos = photosJSONArray;
+        if(JSON.stringify(data[i].photos[0]) === '{}') {
+          data[i].photos= [];
         }
+
       }
       let response = {};
       response.product = product_id;
