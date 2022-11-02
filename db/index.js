@@ -25,11 +25,11 @@ const getReviews = (page, count, sort, product_id) => {
       date,
       reviewer_name,
       helpfulness,
-        NULLIF(array_agg(
-          json_strip_nulls(
-            json_build_object('id', rjp.photo_id, 'url', rjp.url)
-          )
-        ),'{}') as photos
+      array_agg(
+        json_strip_nulls(
+          json_build_object('id', rjp.photo_id, 'url', rjp.url)
+        )
+      ) as photos
 
 
     FROM
