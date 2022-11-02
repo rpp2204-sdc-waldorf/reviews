@@ -38,11 +38,14 @@ const getReviews = (page, count, sort, product_id) => {
       FROM reviews as a
       LEFT JOIN reviews_photos as b
       ON a.id = b.review_id
-      WHERE product_id = ${product_id}
+      WHERE product_id = 71701
       ) rjp
 
       GROUP BY rjp.id, rjp.product_id, rjp.rating, rjp.date, rjp.summary, rjp.body, rjp.recommend,
       rjp.reported, rjp.reviewer_name, rjp.reviewer_email, rjp.response, rjp.helpfulness
+
+    ${sort}
+    LIMIT ${count} OFFSET ${count * page};
     `;
   return pool.query(getReviewsQuery)
     .then((data) => {
