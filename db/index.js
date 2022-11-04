@@ -58,109 +58,67 @@ const getReviews = (page, count, sort, product_id) => {
     })
 }
 
-
-// const getReviews = (page, count, sort, product_id) => {
-//   let getReviewsQuery =
-//     `
-//     SELECT
-//       id as review_id,
-//       product_id,
-//       rating,
-//       summary,
-//       recommend,
-//       response,
-//       body,
-//       date,
-//       reviewer_name,
-//       helpfulness,
-//       array_remove(array_agg(rjp.url),NULL) as photos
-
-//     FROM
-//       (
-//       SELECT a.*, b.url
-//       FROM reviews as a
-//       LEFT JOIN reviews_photos as b
-//       ON a.id = b.review_id
-//       WHERE product_id = ${product_id}
-//       ) as rjp
-
-//       GROUP BY rjp.id, rjp.product_id, rjp.rating, rjp.date, rjp.summary, rjp.body, rjp.recommend,
-//       rjp.reported, rjp.reviewer_name, rjp.reviewer_email, rjp.response, rjp.helpfulness
-
-//     ${sort}
-//     LIMIT ${count} OFFSET ${count * page};
-//     `;
-//   return pool.query(getReviewsQuery)
-//     .then((data) => {
-//       // console.log(data.rows);
-//       return data.rows;
-//     })
-//     .catch((error) => {
-//       console.log('error with query', error);
-//       return error;
-//     })
-// }
-
-
 const getMeta = product_id => {
   let getMetaQuery =
   `
-  SELECT product_id,
-
-array_agg(
-	json_build_object(rating, ratings_count)
-) as ratings,
-
-
-recommend_count, name, characteristic_id, avg
-
-
-
-from
-(
-SELECT A.product_id, rating, ratings_count, recommend_count,
-  array_agg(
-    name
-  ) as name,
-  array_agg(
-    id
-  ) as characteristic_id,
-  array_agg(
+  SELECT
+    product_id,
+    array_agg(
+      json_build_object(rating, ratings_count)
+    ) as ratings,
+    recommend_count,
+    name,
+    characteristic_id,
     avg
-  ) as avg
 
   FROM
   (
-  SELECT product_id, rating,count(*) as ratings_Count
-    FROM reviews
-    WHERE product_id = ${product_id}
-    GROUP BY product_id,rating
-  ) A
-  left join
-  (
-   SELECT product_id, count(id) as recommend_Count
-    FROM reviews
-    WHERE product_id = ${product_id} AND recommend = 'true'
-  GROUP BY product_id
-  ) B
-  on A.product_id=B.product_id
+    SELECT
+      A.product_id,
+      rating,
+      ratings_count,
+      recommend_count,
+      array_agg(
+        name
+      ) as name,
+      array_agg(
+        id
+      ) as characteristic_id,
+      array_agg(
+        avg
+      ) as avg
 
-  left join
-  (
-  SELECT product_id, a.name, a.id, AVG(b.value)
+    FROM
+    (
+      SELECT product_id, rating,count(*) as ratings_Count
+      FROM reviews
+      WHERE product_id = ${product_id}
+      GROUP BY product_id,rating
+    ) A
+    LEFT JOIN
+    (
+      SELECT product_id, count(id) as recommend_Count
+      FROM reviews
+      WHERE product_id = ${product_id} AND recommend = 'true'
+      GROUP BY product_id
+    ) B
+    on A.product_id=B.product_id
+
+    LEFT JOIN
+    (
+      SELECT product_id, a.name, a.id, AVG(b.value)
       FROM characteristics a
       LEFT JOIN characteristic_reviews b
       ON a.id = b.characteristic_id
       WHERE product_id = ${product_id}
       GROUP BY a.name, a.id
-  ) C
-  on A.product_id=C.product_id
+    ) C
+    on A.product_id=C.product_id
 
-  group by A.product_id, rating, ratings_count, recommend_count
-) meta
+    GROUP BY A.product_id, rating, ratings_count, recommend_count
+  )
 
-group by product_id, recommend_count, name, characteristic_id, avg
-
+  GROUP BY product_id, recommend_count, name, characteristic_id, avg
   `;
   return pool.query(getMetaQuery)
     .then((data) => {
@@ -169,18 +127,18 @@ group by product_id, recommend_count, name, characteristic_id, avg
     })
     .catch((error) => {
       console.log('error with query', error);
-      return error;
+      throw error;
     })
 
 }
 
-
+/*
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
     `
   SELECT rating,count(*) as ratings_Count
   FROM reviews
-  WHERE product_id = 87197
+  WHERE product_id = ${product_id}
   GROUP BY rating;
 
   `;
@@ -201,7 +159,7 @@ const getRecommendedCount = product_id => {
     `
   SELECT count(id) as recommend_Count
   FROM reviews
-  WHERE product_id = 135870 AND recommend = 'true'
+  WHERE product_id = ${product_id} AND recommend = 'true'
   `;
   return pool.query(getRatingsDistrQuery)
     .then((data) => {
@@ -234,7 +192,7 @@ const getCharacteristics = product_id => {
       return error;
     })
 }
-
+*/
 
 const insertReview = (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email, photos, characteristics) => {
   let insertReviewQuery =
@@ -312,10 +270,10 @@ const reportReview = review_id => {
 }
 
 module.exports.getReviews = getReviews;
-module.exports.getRatingsDistr = getRatingsDistr;
-module.exports.getRecommendedCount = getRecommendedCount;
-module.exports.getCharacteristics = getCharacteristics;
 module.exports.insertReview = insertReview;
 module.exports.incrementHelpful = incrementHelpful;
 module.exports.reportReview = reportReview;
 module.exports.getMeta = getMeta;
+// module.exports.getRatingsDistr = getRatingsDistr;
+// module.exports.getRecommendedCount = getRecommendedCount;
+// module.exports.getCharacteristics = getCharacteristics;

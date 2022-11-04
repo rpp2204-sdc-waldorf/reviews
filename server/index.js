@@ -56,6 +56,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.status(500).send(error);
     })
 })
+
 /*
 app.get('/reviews/meta*', (req, res) => {
 
@@ -108,6 +109,7 @@ app.get('/reviews/meta*', (req, res) => {
     });
   })
 */
+
 app.get('/reviews*', (req, res) => {
   // console.log("All query strings: " + JSON.stringify(req.query));
   let product_id = req.query.product_id;
