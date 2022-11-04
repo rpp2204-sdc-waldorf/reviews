@@ -15,48 +15,48 @@ app.get('/loaderio-*', (req, res) => {
   res.sendFile(process.env.loaderio);
 })
 
-// app.get('/reviews/meta*', (req, res) => {
+app.get('/reviews/meta*', (req, res) => {
 
-//   let product_id = req.query.product_id;
-//   // console.log('GET /reviews/meta ', product_id);
-//   let response = {};
-//   response.product_id = product_id;
+  let product_id = req.query.product_id;
+  // console.log('GET /reviews/meta ', product_id);
+  let response = {};
+  response.product_id = product_id;
 
-//   Promise.resolve(db.getMeta(product_id))
-//     .then((results) => {
-//       let reviews_count = 0;
-//       let characteristics = {};
-//       let ratings = {
-//         1: 0,
-//         2: 0,
-//         3: 0,
-//         4: 0,
-//         5: 0
-//       };
+  Promise.resolve(db.getMeta(product_id))
+    .then((results) => {
+      let reviews_count = 0;
+      let characteristics = {};
+      let ratings = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
+      };
 
-//       for (var i = 0; i < results[0]['ratings'].length; ++i) {
-//         ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
-//         reviews_count += Object.values(results[0]['ratings'][i])[0];
-//       }
-//       response.ratings = ratings;
+      for (var i = 0; i < results[0]['ratings'].length; ++i) {
+        ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
+        reviews_count += Object.values(results[0]['ratings'][i])[0];
+      }
+      response.ratings = ratings;
 
-//       response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
+      response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
 
-//       for (var i = 0; i < results[0].name.length; ++i) {
-//         let characteristics_name = results[0]['name'][i];
-//         let characteristics_id = results[0]['characteristic_id'][i];
-//         let characteristics_value = results[0]['avg'][i];
-//         characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
-//       }
-//       response.characteristics = characteristics;
+      for (var i = 0; i < results[0].name.length; ++i) {
+        let characteristics_name = results[0]['name'][i];
+        let characteristics_id = results[0]['characteristic_id'][i];
+        let characteristics_value = results[0]['avg'][i];
+        characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
+      }
+      response.characteristics = characteristics;
 
-//       res.send(response);
-//     })
-//     .catch(error => {
-//       res.status(500).send(error);
-//     })
-// })
-
+      res.send(response);
+    })
+    .catch(error => {
+      res.status(500).send(error);
+    })
+})
+/*
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
@@ -107,7 +107,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.status(500).send('GET reviews/meta broke!');
     });
   })
-
+*/
 app.get('/reviews*', (req, res) => {
   // console.log("All query strings: " + JSON.stringify(req.query));
   let product_id = req.query.product_id;
