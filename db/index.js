@@ -174,7 +174,7 @@ group by product_id, recommend_count, name, characteristic_id, avg
 
 }
 
-/*
+
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
     `
@@ -234,7 +234,7 @@ const getCharacteristics = product_id => {
       return error;
     })
 }
-*/
+
 
 const insertReview = (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email, photos, characteristics) => {
   let insertReviewQuery =
@@ -312,9 +312,9 @@ const reportReview = review_id => {
 }
 
 module.exports.getReviews = getReviews;
-// module.exports.getRatingsDistr = getRatingsDistr;
-// module.exports.getRecommendedCount = getRecommendedCount;
-// module.exports.getCharacteristics = getCharacteristics;
+module.exports.getRatingsDistr = getRatingsDistr;
+module.exports.getRecommendedCount = getRecommendedCount;
+module.exports.getCharacteristics = getCharacteristics;
 module.exports.insertReview = insertReview;
 module.exports.incrementHelpful = incrementHelpful;
 module.exports.reportReview = reportReview;
