@@ -117,7 +117,7 @@ const getMeta = product_id => {
     on A.product_id=C.product_id
 
     GROUP BY A.product_id, rating, ratings_count, recommend_count
-  )
+  ) META
 
   GROUP BY product_id, recommend_count, name, characteristic_id, avg
   `;
