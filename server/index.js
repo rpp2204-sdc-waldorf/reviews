@@ -25,7 +25,7 @@ app.get('/reviews/meta*', (req, res) => {
 
   Promise.resolve(db.getMeta(product_id))
     .then((results) => {
-      if(results.length=0) {
+      if(results.length===0) {
         console.log('failed get');
         // res.status(500).send('failed GET meta');
       } else {
