@@ -123,7 +123,7 @@ const getMeta = product_id => {
   `;
   return pool.query(getMetaQuery)
     .then((data) => {
-      console.log(data.rows);
+      // console.log(data.rows);
       return data.rows;
     })
     .catch((error) => {
