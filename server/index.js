@@ -25,33 +25,38 @@ app.get('/reviews/meta*', (req, res) => {
 
   Promise.resolve(db.getMeta(product_id))
     .then((results) => {
-      let reviews_count = 0;
-      let characteristics = {};
-      let ratings = {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0
-      };
+      if(results.length=0) {
+        console.log('failed get');
+        res.status(500).send('failed GET meta');
+      } else {
+        let reviews_count = 0;
+        let characteristics = {};
+        let ratings = {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0
+        };
 
-      for (var i = 0; i < results[0]['ratings'].length; ++i) {
-        ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
-        reviews_count += Object.values(results[0]['ratings'][i])[0];
+        for (var i = 0; i < results[0]['ratings'].length; ++i) {
+          ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
+          reviews_count += Object.values(results[0]['ratings'][i])[0];
+        }
+        response.ratings = ratings;
+
+        response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
+
+        for (var i = 0; i < results[0].name.length; ++i) {
+          let characteristics_name = results[0]['name'][i];
+          let characteristics_id = results[0]['characteristic_id'][i];
+          let characteristics_value = results[0]['avg'][i];
+          characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
+        }
+        response.characteristics = characteristics;
+
+        res.send(response);
       }
-      response.ratings = ratings;
-
-      response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
-
-      for (var i = 0; i < results[0].name.length; ++i) {
-        let characteristics_name = results[0]['name'][i];
-        let characteristics_id = results[0]['characteristic_id'][i];
-        let characteristics_value = results[0]['avg'][i];
-        characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
-      }
-      response.characteristics = characteristics;
-
-      res.send(response);
     })
     .catch(error => {
       res.status(500).send(error);
