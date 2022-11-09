@@ -58,7 +58,7 @@ const getReviews = (page, count, sort, product_id) => {
     })
 }
 
-/*
+
 const getMeta = product_id => {
   let getMetaQuery =
   `
@@ -132,7 +132,7 @@ const getMeta = product_id => {
     })
 
 }
-*/
+
 
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
@@ -274,7 +274,7 @@ module.exports.getReviews = getReviews;
 module.exports.insertReview = insertReview;
 module.exports.incrementHelpful = incrementHelpful;
 module.exports.reportReview = reportReview;
-// module.exports.getMeta = getMeta;
+module.exports.getMeta = getMeta;
 module.exports.getRatingsDistr = getRatingsDistr;
 module.exports.getRecommendedCount = getRecommendedCount;
 module.exports.getCharacteristics = getCharacteristics;
