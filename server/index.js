@@ -27,7 +27,7 @@ app.get('/reviews/meta*', (req, res) => {
     .then((results) => {
       if(results.length=0) {
         console.log('failed get');
-        res.status(500).send('failed GET meta');
+        // res.status(500).send('failed GET meta');
       } else {
         let reviews_count = 0;
         let characteristics = {};
