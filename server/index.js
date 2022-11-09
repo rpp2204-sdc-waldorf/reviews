@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 //   res.sendFile(process.env.loaderio);
 // })
 
-/*
+
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
@@ -58,7 +58,7 @@ app.get('/reviews/meta*', (req, res) => {
     })
 })
 
-*/
+/*
 
 app.get('/reviews/meta*', (req, res) => {
 
@@ -110,7 +110,7 @@ app.get('/reviews/meta*', (req, res) => {
       res.status(500).send('GET reviews/meta broke!');
     });
   })
-
+*/
 
 app.get('/reviews*', (req, res) => {
   // console.log("All query strings: " + JSON.stringify(req.query));
