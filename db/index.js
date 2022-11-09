@@ -13,7 +13,7 @@ const pool = new Pool({
 // pool.connect();
 
 const getReviews = (page, count, sort, product_id) => {
-   let getReviewsQuery =
+  let getReviewsQuery =
     `
     SELECT
       rjp.id as review_id,
@@ -49,7 +49,6 @@ const getReviews = (page, count, sort, product_id) => {
     `;
   return pool.query(getReviewsQuery)
     .then((data) => {
-      // console.log(data.rows);
       return data.rows;
     })
     .catch((error) => {
@@ -61,7 +60,7 @@ const getReviews = (page, count, sort, product_id) => {
 
 const getMeta = product_id => {
   let getMetaQuery =
-  `
+    `
   SELECT
     product_id,
     array_agg(
@@ -123,7 +122,7 @@ const getMeta = product_id => {
   `;
   return pool.query(getMetaQuery)
     .then((data) => {
-      // console.log(data.rows);
+      console.log(data);
       return data.rows;
     })
     .catch((error) => {
