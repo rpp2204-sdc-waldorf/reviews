@@ -26,7 +26,6 @@ app.get('/reviews/meta*', (req, res) => {
   Promise.resolve(db.getMeta(product_id))
     .then((results) => {
       if(results.length===0) {
-        console.log('results = 0', results);
         res.status(204).send('no such product_id');
       } else {
         let reviews_count = 0;
