@@ -6,7 +6,7 @@ const pool = new Pool({
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  "max": 100,
+  "max": 250,
   "connectionTimeoutMillis": 0,
   "idleTimeoutMillis": 0
 });
@@ -58,6 +58,7 @@ const getReviews = (page, count, sort, product_id) => {
     })
 }
 
+/*
 const getMeta = product_id => {
   let getMetaQuery =
   `
@@ -131,8 +132,8 @@ const getMeta = product_id => {
     })
 
 }
+*/
 
-/*
 const getRatingsDistr = product_id => {
   let getRatingsDistrQuery =
     `
@@ -192,7 +193,7 @@ const getCharacteristics = product_id => {
       return error;
     })
 }
-*/
+
 
 const insertReview = (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email, photos, characteristics) => {
   let insertReviewQuery =
@@ -273,7 +274,7 @@ module.exports.getReviews = getReviews;
 module.exports.insertReview = insertReview;
 module.exports.incrementHelpful = incrementHelpful;
 module.exports.reportReview = reportReview;
-module.exports.getMeta = getMeta;
-// module.exports.getRatingsDistr = getRatingsDistr;
-// module.exports.getRecommendedCount = getRecommendedCount;
-// module.exports.getCharacteristics = getCharacteristics;
+// module.exports.getMeta = getMeta;
+module.exports.getRatingsDistr = getRatingsDistr;
+module.exports.getRecommendedCount = getRecommendedCount;
+module.exports.getCharacteristics = getCharacteristics;
