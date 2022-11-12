@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/reviews/meta', async (req, res) => {
-  await getOrSetCache(`/reviews/meta?product_id=${req.query.product_id}`, db.getMeta(req.query.product_id))
+  await getOrSetCache(`/reviews/meta?product_id=${req.query.product_id}`, db.getMeta, req.query.product_id)
     .then((results) => {
       res.status(200).send(results);
     })
@@ -89,8 +89,7 @@ app.get('/reviews/meta*', (req, res) => {
 */
 
 app.get('/reviews', async (req, res) => {
-  console.log(`/reviews?product_id=${JSON.stringify(req.query)}`);
-  await getOrSetCache(`/reviews?product_id=${JSON.stringify(req.query)}`, db.getReviews(req.query))
+  await getOrSetCache(`/reviews?product_id=${JSON.stringify(req.query)}`, db.getReviews, req.query)
     .then(results => {
       res.status(200).send(results);
     })
@@ -149,17 +148,14 @@ app.listen(port, () => {
 
 
 
-const getOrSetCache = (key, callback) => {
+const getOrSetCache = (key, callback, params) => {
   return new Promise(async (resolve, reject) => {
     const cacheVal = await redisClient.get(key);
     if (cacheVal !== null) {
-      // console.log('hit');
       return resolve(JSON.parse(cacheVal));
     } else if (cacheVal === null) {
-
-      const dbData = await callback;
+      const dbData = await callback(params);
       redisClient.set(key, JSON.stringify(dbData))
-      // console.log('miss');
       return resolve(dbData);
 
     }
