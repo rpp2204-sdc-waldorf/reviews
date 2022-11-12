@@ -152,15 +152,16 @@ app.listen(port, () => {
 const getOrSetCache = (key, callback) => {
   return new Promise(async (resolve, reject) => {
     const cacheVal = await redisClient.get(key);
-    if (cacheVal === null) {
+    if (cacheVal !== null) {
+      // console.log('hit');
+      return resolve(JSON.parse(cacheVal));
+    } else if (cacheVal === null) {
+
       const dbData = await callback;
       redisClient.set(key, JSON.stringify(dbData))
       // console.log('miss');
       return resolve(dbData);
 
-    } if (cacheVal !== null) {
-      // console.log('hit');
-      return resolve(JSON.parse(cacheVal));
     }
   })
 }

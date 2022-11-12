@@ -171,8 +171,8 @@ const getMeta = product_id => {
       if (results.length === 0) {
         response.ratings = ratings;
         response.characteristics = characteristics;
-        response.recommended = { true: 0, false: 0 };
-      } else if (results.length !== 0) {
+        response.recommended = {true: 0, false: 0};
+      } else if (results.length !==0) {
 
         for (var i = 0; i < results[0]['ratings'].length; ++i) {
           ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
