@@ -12,7 +12,27 @@ const pool = new Pool({
 });
 // pool.connect();
 
-const getReviews = (page, count, sort, product_id) => {
+const getReviews = (params) => {
+
+  let product_id = params.product_id;
+  let page = params.page || 0;
+  let count = params.count || 5;
+  let sort;
+
+  switch (params.sort) {
+    case 'newest':
+      sort = 'ORDER BY date DESC';
+      break;
+    case 'helpful':
+      sort = 'ORDER BY helpfulness DESC'
+      break;
+    case 'relevant':
+      sort = 'ORDER BY helpfulness DESC, date DESC';
+      break;
+    default:
+      sort = ''
+  }
+
   let getReviewsQuery =
     `
     SELECT
@@ -49,11 +69,24 @@ const getReviews = (page, count, sort, product_id) => {
     `;
   return pool.query(getReviewsQuery)
     .then((data) => {
-      return data.rows;
+      let results = data.rows
+      for (var i = 0; i < results.length; ++i) {
+        results[i].date = new Date(Number(results[i].date));
+        if (JSON.stringify(results[i].photos[0]) === '{}') {
+          results[i].photos = [];
+        }
+
+      }
+      let response = {};
+      response.product = product_id;
+      response.page = page;
+      response.count = count;
+      response.results = results;
+      return response;
     })
     .catch((error) => {
       console.log('error with query', error);
-      return error;
+      throw error;
     })
 }
 
@@ -122,7 +155,43 @@ const getMeta = product_id => {
   `;
   return pool.query(getMetaQuery)
     .then((data) => {
-      return data.rows;
+      let results = data.rows;
+      let response = {};
+      response.product_id = product_id;
+
+      let reviews_count = 0;
+      let characteristics = {};
+      let ratings = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
+      };
+      if (results.length === 0) {
+        response.ratings = ratings;
+        response.characteristics = characteristics;
+        response.recommended = { true: 0, false: 0 };
+      } else if (results.length !== 0) {
+
+        for (var i = 0; i < results[0]['ratings'].length; ++i) {
+          ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
+          reviews_count += Object.values(results[0]['ratings'][i])[0];
+        }
+        response.ratings = ratings;
+
+        response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
+
+        for (var i = 0; i < results[0].name.length; ++i) {
+          let characteristics_name = results[0]['name'][i];
+          let characteristics_id = results[0]['characteristic_id'][i];
+          let characteristics_value = results[0]['avg'][i];
+          characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
+        }
+        response.characteristics = characteristics;
+
+      }
+      return response;
     })
     .catch((error) => {
       console.log('error with query', error);

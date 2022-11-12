@@ -3,6 +3,10 @@ const express = require('express')
 const app = express()
 const port = 4000;
 require("dotenv").config({ path: '../.env' });
+const Redis = require('redis');
+
+const redisClient = Redis.createClient();
+redisClient.connect();
 
 // For parsing application/json
 app.use(express.json());
@@ -10,59 +14,28 @@ app.use(express.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// app.get('/loaderio-*', (req, res) => {
-//   console.log('verify target');
-//   res.sendFile(process.env.loaderio);
-// })
-
-
-app.get('/reviews/meta*', (req, res) => {
-
-  let product_id = req.query.product_id;
-  // console.log('GET /reviews/meta ', product_id);
-  let response = {};
-  response.product_id = product_id;
-
-  Promise.resolve(db.getMeta(product_id))
+app.get('/reviews/meta', async (req, res) => {
+  await getOrSetCache(`/reviews/meta?product_id=${req.query.product_id}`, db.getMeta(req.query.product_id))
     .then((results) => {
-      if(results.length===0) {
-        res.status(204).send('no such product_id');
-      } else {
-        let reviews_count = 0;
-        let characteristics = {};
-        let ratings = {
-          1: 0,
-          2: 0,
-          3: 0,
-          4: 0,
-          5: 0
-        };
-
-        for (var i = 0; i < results[0]['ratings'].length; ++i) {
-          ratings[Object.keys(results[0]['ratings'][i])[0]] = Object.values(results[0]['ratings'][i])[0];
-          reviews_count += Object.values(results[0]['ratings'][i])[0];
-        }
-        response.ratings = ratings;
-
-        response.recommended = { true: Number(results[0]['recommend_count']), false: reviews_count - results[0]['recommend_count'] }
-
-        for (var i = 0; i < results[0].name.length; ++i) {
-          let characteristics_name = results[0]['name'][i];
-          let characteristics_id = results[0]['characteristic_id'][i];
-          let characteristics_value = results[0]['avg'][i];
-          characteristics[characteristics_name] = { "id": characteristics_id, 'value': characteristics_value };
-        }
-        response.characteristics = characteristics;
-
-        res.send(response);
-      }
+      res.status(200).send(results);
     })
     .catch(error => {
       res.status(500).send(error);
     })
 })
-/*
 
+
+// app.get('/reviews/meta', async (req, res) => {
+//   await db.getMeta(req.query.product_id)
+//     .then((results) => {
+//       res.status(200).send(results);
+//     })
+//     .catch(error => {
+//       res.status(500).send(error);
+//     })
+// })
+
+/*
 app.get('/reviews/meta*', (req, res) => {
 
   let product_id = req.query.product_id;
@@ -114,48 +87,27 @@ app.get('/reviews/meta*', (req, res) => {
     });
   })
 */
-app.get('/reviews*', (req, res) => {
-  // console.log("All query strings: " + JSON.stringify(req.query));
-  let product_id = req.query.product_id;
-  let page = req.query.page || 0;
-  let count = req.query.count || 5;
-  let sort;
 
-  switch (req.query.sort) {
-    case 'newest':
-      sort = 'ORDER BY date DESC';
-      break;
-    case 'helpful':
-      sort = 'ORDER BY helpfulness DESC'
-      break;
-    case 'relevant':
-      sort = 'ORDER BY helpfulness DESC, date DESC';
-      break;
-    default:
-      sort = ''
-  }
-
-  Promise.resolve(db.getReviews(page, count, sort, product_id))
-    .then((data) => {
-      for (var i = 0; i < data.length; ++i) {
-        data[i].date = new Date(Number(data[i].date));
-        if (JSON.stringify(data[i].photos[0]) === '{}') {
-          data[i].photos = [];
-        }
-
-      }
-      let response = {};
-      response.product = product_id;
-      response.page = page;
-      response.count = count;
-      response.results = data;
-      res.send(response);
-
+app.get('/reviews', async (req, res) => {
+  console.log(`/reviews?product_id=${JSON.stringify(req.query)}`);
+  await getOrSetCache(`/reviews?product_id=${JSON.stringify(req.query)}`, db.getReviews(req.query))
+    .then(results => {
+      res.status(200).send(results);
     })
-    .catch(err => {
-      res.status(500).send('GET reviews broke!');
-    });
+    .catch(error => {
+      res.status(500).send(error);
+    })
 })
+// app.get('/reviews*', (req, res) => {
+
+//   Promise.resolve(db.getReviews(req.query))
+//     .then(results => {
+//       res.status(200).send(results);
+//     })
+//     .catch(error => {
+//       res.status(500).send(error);
+//     })
+// })
 
 app.post('/reviews', (req, res) => {
   let review = req.body;
@@ -194,6 +146,24 @@ app.put('/reviews/:review_id/report', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+
+
+const getOrSetCache = (key, callback) => {
+  return new Promise(async (resolve, reject) => {
+    const cacheVal = await redisClient.get(key);
+    if (cacheVal === null) {
+      const dbData = await callback;
+      redisClient.set(key, JSON.stringify(dbData))
+      // console.log('miss');
+      return resolve(dbData);
+
+    } if (cacheVal !== null) {
+      // console.log('hit');
+      return resolve(JSON.parse(cacheVal));
+    }
+  })
+}
 
 
 module.exports = app;

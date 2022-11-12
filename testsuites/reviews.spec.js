@@ -16,35 +16,17 @@ const app = require('../server/index.js');
 
 
 describe("Server tests", function () {
-    test("GET /reviews?product_id=71701&count=3", async () => {
+    test("GET /reviews?product_id=71701&count=3&sort=helpful", async () => {
         const app = require('../server/index.js');
 
-        let mockResult = {
+        let mockResult =
+        {
             "product": "71701",
             "page": 0,
             "count": "3",
             "results": [
                 {
-                    "id": 413986,
-                    "product_id": 71701,
-                    "rating": 5,
-                    "summary": "Sit eum sed est accusamus inventore praesentium assumenda.",
-                    "recommend": true,
-                    "response": "null",
-                    "body": "Nemo enim voluptatum vero quia. Rem quo quae doloribus. Quas vel aliquam expedita. Ut repellat iusto ut illo aut quo voluptatem molestiae eum. Dolorem culpa quia quia debitis quod commodi perferendis quos consequuntur.",
-                    "date": "2020-11-22T04:43:20.858Z",
-                    "reviewer_name": "Kendall64",
-                    "helpfulness": 10,
-                    "photos": [
-                        {
-                            "id": 1,
-                            "url": "https://images.unsplash.com/photo-1447879027584-9d17c2ca0333?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1651&q=80"
-                        }
-                    ]
-                },
-                {
-                    "id": 413987,
-                    "product_id": 71701,
+                    "review_id": 413987,
                     "rating": 1,
                     "summary": "Nulla neque labore omnis quas neque quaerat.",
                     "recommend": false,
@@ -56,8 +38,24 @@ describe("Server tests", function () {
                     "photos": []
                 },
                 {
-                    "id": 413988,
-                    "product_id": 71701,
+                    "review_id": 413986,
+                    "rating": 5,
+                    "summary": "Sit eum sed est accusamus inventore praesentium assumenda.",
+                    "recommend": true,
+                    "response": "null",
+                    "body": "Nemo enim voluptatum vero quia. Rem quo quae doloribus. Quas vel aliquam expedita. Ut repellat iusto ut illo aut quo voluptatem molestiae eum. Dolorem culpa quia quia debitis quod commodi perferendis quos consequuntur.",
+                    "date": "2020-11-22T04:43:20.858Z",
+                    "reviewer_name": "Kendall64",
+                    "helpfulness": 10,
+                    "photos": [
+                        {
+                            "id": 196200,
+                            "url": "https://images.unsplash.com/photo-1447879027584-9d17c2ca0333?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1651&q=80"
+                        }
+                    ]
+                },
+                {
+                    "review_id": 413988,
                     "rating": 1,
                     "summary": "Est adipisci repudiandae et.",
                     "recommend": false,
@@ -68,7 +66,7 @@ describe("Server tests", function () {
                     "helpfulness": 10,
                     "photos": [
                         {
-                            "id": 1,
+                            "id": 196201,
                             "url": "https://images.unsplash.com/photo-1550188053-b4e1e8e4f94f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2775&q=80"
                         }
                     ]
@@ -76,7 +74,7 @@ describe("Server tests", function () {
             ]
         }
 
-        const response = await request(app).get("/reviews?product_id=71701&count=3")
+        const response = await request(app).get("/reviews?product_id=71701&count=3&sort=helpful")
         expect(response.statusCode).toBe(200)
         expect(response.text).toBe(JSON.stringify(mockResult))
     });
